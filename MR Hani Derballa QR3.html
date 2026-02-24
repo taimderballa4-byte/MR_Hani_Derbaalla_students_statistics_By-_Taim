@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+    <title>إدارة شئون طلاب مستر هاني دربالة - MR Hani Derballa | students statistics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        :root {
+            --primary: #4361ee; --primary-dark: #3a0ca3; --primary-light: #4895ef;
+            --secondary: #f72585; --success: #06d6a0; --warning: #ffb703; --danger: #e63946;
+            --dark: #1e1e2f; --light: #f8f9fa; --gray: #6c757d;
+            --exempt: #4cc9f0; 
+            --discount: #7209b7; 
+            --border-radius: 30px; --box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --first-sec-color: #4361ee; --second-sec-color: #f72585; --third-sec-color: #06d6a0;
+        }
+        html { scroll-behavior: smooth; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; transition: var(--transition); }
+        body.dark-mode { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .hidden { display: none !important; }
+        .back-to-top { position: fixed; bottom: 30px; left: 30px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: var(--box-shadow); transition: var(--transition); z-index: 999; border: 2px solid rgba(255, 255, 255, 0.3); }
+        .back-to-top:hover { transform: translateY(-2px) scale(1.03); }
+        .toast-notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: white; color: var(--dark); padding: 16px 32px; border-radius: 60px; box-shadow: 0 25px 45px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 12px; z-index: 9999; animation: slideDown 0.3s ease, fadeOut 0.3s ease 2.7s forwards; border-bottom: 4px solid var(--success); font-weight: 700; min-width: 300px; text-align: center; }
+        .toast-notification.success { border-bottom-color: var(--success); } .toast-notification.success i { color: var(--success); }
+        .toast-notification.error { border-bottom-color: var(--danger); } .toast-notification.error i { color: var(--danger); }
+        .toast-notification.warning { border-bottom-color: var(--warning); } .toast-notification.warning i { color: var(--warning); }
+        @keyframes slideDown { from { transform: translate(-50%, -100%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translate(-50%, -20px); } }
+
+        .login-card { max-width: 450px; margin: 50px auto; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); border-radius: var(--border-radius); padding: 40px; box-shadow: var(--box-shadow); border: 1px solid rgba(255, 255, 255, 0.5); animation: slideUp 0.6s ease; }
+        .dark-mode .login-card { background: rgba(30, 30, 47, 0.85); border-color: rgba(255, 255, 255, 0.1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo i { font-size: 60px; color: var(--primary); background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo h1 { font-size: 28px; font-weight: 900; margin-top: 15px; color: var(--primary); }
+        .dark-mode .logo h1 { color: #6c8eff; }
+        .password-field { position: relative; margin: 20px 0; }
+        .password-field input { width: 100%; padding: 16px 50px 16px 20px; border: 2px solid #e0e0e0; border-radius: 50px; font-size: 16px; background: white; }
+        .dark-mode .password-field input { background: #2d2d3f; border-color: #3d3d5c; color: white; }
+        .toggle-password { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 20px; color: var(--gray); cursor: pointer; }
+
+        .btn { padding: 14px 28px; border: none; border-radius: 50px; font-size: 16px; font-weight: 700; cursor: pointer; transition: var(--transition); display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; width: 100%; margin: 10px 0; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4); }
+        .btn-secondary { background: linear-gradient(135deg, var(--gray), #495057); }
+        .btn-warning { background: linear-gradient(135deg, #f8961e, #f3722c); }
+        .btn-danger { background: linear-gradient(135deg, var(--danger), #c1121f); }
+        .btn-pdf { background: linear-gradient(135deg, #dc3545, #b02a37); }
+        .btn-pdf-notpaid { background: linear-gradient(135deg, #e63946, #c1121f); }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+
+        .dashboard-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); border-radius: 30px; padding: 25px; margin-bottom: 25px; box-shadow: var(--box-shadow); border: 1px solid rgba(255, 255, 255, 0.5); overflow: hidden; position: relative; }
+        .dashboard-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, var(--primary), var(--secondary), var(--success)); }
+        .dark-mode .dashboard-card { background: rgba(30, 30, 47, 0.85); border-color: rgba(255, 255, 255, 0.1); }
+        
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+        .top-bar h1 { font-size: 32px; font-weight: 900; background: linear-gradient(135deg, white, #f0f0f0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; text-shadow: 0 2px 10px rgba(67, 97, 238, 0.3); }
+        .control-btn { width: 50px; height: 50px; border-radius: 50%; border: none; background: rgba(255, 255, 255, 0.2); color: white; font-size: 22px; cursor: pointer; backdrop-filter: blur(5px); }
+        .control-btn:hover { background: rgba(255, 255, 255, 0.3); transform: rotate(15deg); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0; }
+        .stat-card { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); border-radius: 20px; padding: 25px; display: flex; align-items: center; gap: 20px; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .dark-mode .stat-card { background: rgba(67, 97, 238, 0.2); }
+        .stat-icon { width: 60px; height: 60px; border-radius: 18px; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; }
+        .stat-info h3 { font-size: 32px; font-weight: 900; margin: 0; color: var(--primary); }
+        .dark-mode .stat-info h3 { color: #6c8eff; }
+        .stat-info p { margin: 5px 0 0; color: var(--gray); font-size: 14px; font-weight: 500; }
+
+        .mini-stats { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .progress-bars { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+        .progress-container { flex: 1; height: 10px; background: #e0e0e0; border-radius: 10px; display: flex; overflow: hidden; }
+        .progress-bar-first { background: var(--first-sec-color); transition: width 0.5s; }
+        .progress-bar-second { background: var(--second-sec-color); transition: width 0.5s; }
+        .progress-bar-third { background: var(--third-sec-color); transition: width 0.5s; }
+        .payment-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); }
+        .payment-value { font-size: 20px; font-weight: 900; color: var(--dark); }
+        .payment-value.success { color: var(--success); } .payment-value.danger { color: var(--danger); }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 700; color: var(--dark); font-size: 14px; }
+        .dark-mode .input-group label { color: #e0e0e0; }
+        .form-control { width: 100%; padding: 14px 20px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 15px; background: white; transition: var(--transition); }
+        .dark-mode .form-control { background: #2d2d3f; border-color: #3d3d5c; color: white; }
+        .form-control:focus { border-color: var(--primary); outline: none; }
+        
+        .table-container { overflow-x: auto; border-radius: 16px; background: rgba(255, 255, 255, 0.5); padding: 5px; margin-top: 10px; }
+        .dark-mode .table-container { background: rgba(30, 30, 47, 0.5); }
+        table { width: 100%; border-collapse: collapse; border-radius: 16px; overflow: hidden; }
+        th { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 16px; font-size: 13px; cursor: pointer; text-align: center; white-space: nowrap; }
+        td { padding: 16px; background: white; border-bottom: 1px solid #f0f0f0; color: var(--dark); font-weight: 500; text-align: center; position: relative; }
+        .dark-mode td { background: #2d2d3f; color: #f0f0f0; border-bottom-color: #3d3d5c; }
+
+        .grade-badge { padding: 6px 12px; border-radius: 50px; font-weight: 700; font-size: 12px; color: white; white-space: nowrap; }
+        .grade-badge.first-sec { background: var(--first-sec-color); }
+        .grade-badge.second-sec { background: var(--second-sec-color); }
+        .grade-badge.third-sec { background: var(--third-sec-color); }
+
+        .scan-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(6, 214, 160, 0.15);
+            color: var(--success);
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-right: 8px;
+            animation: fadeInScale 0.3s ease;
+            border-right: 2px solid var(--success);
+        }
+        .scan-indicator i { font-size: 14px; color: var(--success); }
+        @keyframes fadeInScale { from { opacity:0; transform:scale(0.8); } to { opacity:1; transform:scale(1); } }
+        @keyframes fadeOut { to { opacity:0; transform:scale(0.8); display:none; } }
+        .scan-indicator.fade-out { animation: fadeOut 0.3s ease forwards; }
+
+        .payment-status { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 50px; font-weight: 700; font-size: 13px; cursor: pointer; transition: var(--transition); border: none; background: transparent; white-space: nowrap; }
+        .payment-status.paid { background: rgba(6, 214, 160, 0.15); color: var(--success); }
+        .payment-status.not-paid { background: rgba(230, 57, 70, 0.15); color: var(--danger); }
+        .payment-status.exempt { background: rgba(76, 201, 240, 0.15); color: var(--exempt); }
+        .payment-status.discount { background: rgba(114, 9, 183, 0.15); color: var(--discount); }
+        .payment-status:hover { transform: scale(1.05); }
+
+        .action-btn { width: 35px; height: 35px; border-radius: 10px; border: none; background: linear-gradient(135deg, var(--primary-light), var(--primary)); color: white; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin: 0 2px; }
+        .action-btn.delete { background: linear-gradient(135deg, var(--danger), #c1121f); }
+        .action-btn.whatsapp { background: #25D366; }
+        .attendance-badge { display: inline-flex; align-items: center; background: #f0f0f0; border-radius: 50px; padding: 3px; }
+        .dark-mode .attendance-badge { background: #3d3d5c; }
+        .attendance-badge button { width: 28px; height: 28px; border-radius: 50%; border: none; background: white; color: var(--primary); cursor: pointer; }
+        .dark-mode .attendance-badge button { background: #2d2d3f; color: white; }
+        .attendance-badge span { padding: 0 10px; font-weight: 900; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 9999; }
+        .edit-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 30px; z-index: 10000; width: 90%; max-width: 500px; border: 1px solid rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); }
+        .dark-mode .edit-modal { background: #2d2d3f; border-color: rgba(255,255,255,0.1); }
+        .edit-modal h3 { color: var(--primary); margin-bottom: 20px; font-size: 24px; display: flex; align-items: center; gap: 10px; }
+        .modal-buttons { display: flex; gap: 15px; margin-top: 25px; }
+        .btn-save { flex: 1; padding: 12px; background: linear-gradient(135deg, var(--success), #0ca678); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        .btn-cancel { flex: 1; padding: 12px; background: linear-gradient(135deg, var(--gray), #495057); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+
+        /* PDF Template */
+        .pdf-template { position: fixed; top: -9999px; width: 1000px; background: white; padding: 40px; border-radius: 16px; direction: rtl; }
+        .pdf-template h1 { color: #4361ee; text-align: center; margin-bottom: 10px; }
+        .pdf-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
+        .pdf-stat-card { background: rgba(67, 97, 238, 0.1); padding: 15px; border-radius: 12px; text-align: center; }
+        .pdf-stat-value { font-size: 24px; font-weight: 900; color: #4361ee; }
+        .pdf-template table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .pdf-template th { background: #4361ee; color: white; padding: 12px; text-align: center; }
+        .pdf-template td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .payment-summary { grid-template-columns: 1fr; }
+            .filter-bar { flex-direction: column; }
+            body { padding: 10px; }
+            .top-bar { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+            .top-bar h1 { font-size: 20px; }
+            table th, table td { padding: 8px; font-size: 12px; }
+            .action-btn { width: 28px; height: 28px; font-size: 12px; }
+            .filter-bar { flex-direction: column; width: 100%; gap: 10px; }
+            #search, #filterCategory { width: 100% !important; }
+            .dashboard-card { padding: 15px; }
+        }
+
+        @keyframes highlightRow {
+            0% { background-color: rgba(67, 97, 238, 0.1); transform: scale(1); }
+            30% { background-color: rgba(247, 37, 133, 0.25); transform: scale(1.01); }
+            70% { background-color: rgba(6, 214, 160, 0.2); }
+            100% { background-color: transparent; transform: scale(1); }
+        }
+        tr.highlight-student { animation: highlightRow 2.5s ease-in-out; }
+
+        .qr-icon-btn { background: linear-gradient(135deg, #4cc9f0, #3a0ca3); }
+
+        /* new styles for separate page, gallery, whatsapp */
+        .student-detail-page { background: white; border-radius: 30px; padding: 25px; margin-top: 20px; }
+        .dark-mode .student-detail-page { background: #2d2d3f; color: #eee; }
+        .back-button { margin-bottom: 20px; display: inline-block; cursor: pointer; color: var(--primary); font-weight: 700; }
+        .info-row { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; margin: 15px 0; padding: 10px; background: rgba(67,97,238,0.05); border-radius: 16px; }
+        .whatsapp-link { color: #25D366; font-size: 24px; margin-right: 5px; transition: transform 0.2s; display: inline-flex; align-items: center; }
+        .whatsapp-link:hover { transform: scale(1.1); }
+        .absent-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        .absent-table th { background: var(--primary); color: white; padding: 10px; }
+        .absent-table td { background: white; padding: 10px; border-bottom: 1px solid #ddd; }
+        .dark-mode .absent-table td { background: #3d3d5c; color: white; }
+        .absent-table input { width: 100%; padding: 6px; border-radius: 8px; border: 1px solid #ccc; }
+        .delete-row-btn { background: var(--danger); color: white; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+        .add-absent-row { margin: 10px 0; background: var(--primary); color: white; border: none; border-radius: 12px; padding: 8px 16px; cursor: pointer; }
+        .image-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin: 20px 0; }
+        .gallery-item { border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); aspect-ratio: 1/1; background: #f0f0f0; display: flex; align-items: center; justify-content: center; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        .upload-btn-wrapper { position: relative; display: inline-block; margin: 10px 0; }
+        .upload-btn-wrapper input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+        .student-mini-card { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; background: rgba(255,255,255,0.2); border-radius: 20px; padding: 15px; margin-bottom: 20px; }
+        .student-mini-card .qr-img { width: 80px; height: 80px; border: 2px solid var(--primary); border-radius: 12px; padding: 4px; background: white; }
+        .student-mini-card .details { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .detail-badge { background: var(--primary); color: white; padding: 4px 12px; border-radius: 30px; font-size: 14px; display: inline-block; }
+        .phone-with-wa { display: flex; align-items: center; gap: 5px; background: white; padding: 5px 12px; border-radius: 40px; border: 1px solid #25D366; }
+
+        .camera-permission-msg { padding: 12px; border-radius: 12px; margin-top: 8px; font-weight: 500; }
+        .camera-permission-msg.success { background: rgba(6,214,160,0.15); color: var(--success); border-right: 4px solid var(--success); }
+        .camera-permission-msg.error { background: rgba(230,57,70,0.15); color: var(--danger); border-right: 4px solid var(--danger); }
+
+        /* التوقيع في أسفل الصفحات */
+        .footer-signature {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 12px;
+            color: var(--gray);
+            border-top: 1px solid rgba(255,255,255,0.2);
+            opacity: 0.8;
+            font-weight: 400;
+        }
+        .dark-mode .footer-signature {
+            color: #aaa;
+            border-top-color: rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+    <button class="back-to-top hidden" onclick="scrollToTop()" id="backToTopBtn"><i class="fas fa-arrow-up"></i></button>
+    <div id="toastContainer"></div>
+
+    <div id="modalOverlay" class="modal-overlay hidden"></div>
+    <div id="editModal" class="edit-modal hidden">
+        <h3><i class="fas fa-edit"></i> <span id="modalTitleText">تعديل بيانات الطالب</span></h3>
+        <div class="input-group">
+            <label id="modalNameLabel"><i class="fas fa-user"></i> اسم الطالب</label>
+            <input type="text" id="modalStudentName" class="form-control">
+        </div>
+        <div class="input-group">
+            <label id="modalGradeLabel"><i class="fas fa-layer-group"></i> الصف</label>
+            <select id="modalStudentGrade" class="form-control">
+                <option value="First SEC">الصف الأول الثانوي</option>
+                <option value="Second SEC">الصف الثاني الثانوي</option>
+                <option value="Third SEC">الصف الثالث الثانوي</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label><i class="fas fa-credit-card"></i> حالة الدفع</label>
+            <select id="modalPaymentStatus" class="form-control" onchange="toggleModalDiscountInput()">
+                <option value="not-paid">غير مدفوع</option>
+                <option value="paid">مدفوع (كامل)</option>
+                <option value="exempt">خالص (معفي)</option>
+                <option value="discount">خصم</option>
+            </select>
+        </div>
+        <div class="input-group hidden" id="modalDiscountGroup">
+            <label><i class="fas fa-percentage"></i> قيمة الخصم (ج.م)</label>
+            <input type="number" id="modalDiscountVal" class="form-control" placeholder="أدخل قيمة الخصم">
+        </div>
+        <div class="input-group">
+            <label id="modalNotesLabel"><i class="fas fa-sticky-note"></i> ملاحظات</label>
+            <textarea id="modalStudentNotes" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn-save" onclick="saveStudentEdit()"><i class="fas fa-check"></i> <span id="saveBtnText">حفظ</span></button>
+            <button class="btn-cancel" onclick="closeEditModal()"><i class="fas fa-times"></i> <span id="cancelBtnText">إلغاء</span></button>
+        </div>
+    </div>
+
+    <!-- login box -->
+    <div class="container" id="loginBox">
+        <div class="login-card">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1 id="loginTitle">MR Hani Derballa - مستر هاني دربالة</h1>
+                <p style="color: var(--gray); margin-top: 10px;">نظام إدارة الطلاب المتقدم</p>
+            </div>
+            <div class="password-field">
+                <input type="password" id="loginPass" placeholder="أدخل كلمة المرور">
+                <button type="button" class="toggle-password" onclick="togglePasswordVisibility()"><i class="fas fa-eye"></i></button>
+            </div>
+            <button class="btn" onclick="login()"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</button>
+            <p id="loginMsg" style="color: var(--danger); text-align: center; margin-top: 15px;"></p>
+            <!-- توقيع Taim Deballa في صفحة تسجيل الدخول -->
+            <div class="footer-signature">Made by Taim Deballa</div>
+        </div>
+    </div>
+
+    <!-- main app -->
+    <div class="container hidden" id="app">
+        <div class="top-bar">
+            <h1>MR Hani Derballa students statistics</h1>
+            <div class="control-buttons">
+                <button class="control-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+                <button class="control-btn" onclick="scrollToNotPaid()"><i class="fas fa-arrow-down"></i></button>
+                <button class="control-btn qr-icon-btn" onclick="toggleAdminPanel()"><i class="fas fa-qrcode"></i></button>
+                <button class="control-btn" style="background: linear-gradient(135deg, #06d6a0, #0ca678);" onclick="downloadAllCardsAsOnePDF()" title="تحميل كل البطاقات (ملف PDF واحد)"><i class="fas fa-file-pdf"></i></button>
+            </div>
+        </div>
+
+        <div id="adminPanel" class="dashboard-card">
+            <h2 style="color:var(--primary);"><i class="fas fa-chart-simple"></i> لوحة تحكم المشرف</h2>
+            <div class="stats-grid" id="adminStats"></div>
+            <h3>أكثر 10 طلاب مسحاً</h3>
+            <div id="topScannedTable" class="table-container"></div>
+            <h3>آخر 20 عملية مسح</h3>
+            <div id="recentScansTable" class="table-container"></div>
+        </div>
+
+        <div class="dashboard-card qr-scanner-section">
+            <h3 style="color:var(--primary); margin-bottom:15px;"><i class="fas fa-qrcode"></i> مسح QR كود</h3>
+            <div class="scanner-controls">
+                <button class="btn" style="width:auto;" onclick="requestCameraPermission()"><i class="fas fa-camera"></i> طلب إذن الكاميرا</button>
+                <button class="btn" style="width:auto;" onclick="startScanner()"><i class="fas fa-play"></i> بدء المسح</button>
+                <button class="btn btn-secondary" style="width:auto;" onclick="stopScanner()"><i class="fas fa-stop"></i> إيقاف المسح</button>
+            </div>
+            <div id="scannerContainer" style="width:100%; max-width:500px; margin:10px auto;"></div>
+            <div id="scanResult" style="margin-top:10px; padding:10px; border-radius:10px; text-align:center;"></div>
+        </div>
+
+        <!-- dashboard stats -->
+        <div class="dashboard-card">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <h2 style="color: var(--primary);"><i class="fas fa-chart-line"></i> <span id="overviewTitle">نظرة عامة</span></h2>
+                <span style="background: rgba(6, 214, 160, 0.1); padding: 8px 16px; border-radius: 50px; color: var(--success); font-weight: bold;"><i class="fas fa-calendar"></i> الفصل الثاني 2026</span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-info"><h3 id="statTotal">0</h3><p id="totalStudentsLabel">إجمالي الطلاب</p></div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-info"><h3 id="statAttendance">0%</h3><p id="attendanceLabel">نسبة الحضور</p></div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-dollar-sign"></i></div><div class="stat-info"><h3 id="statPaid">0%</h3><p id="paidLabel">المسددين</p></div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-info"><h3 id="statNotPaid">0</h3><p id="notPaidLabel">غير المسددين</p></div></div>
+            </div>
+        </div>
+
+        <!-- add student -->
+        <div class="dashboard-card">
+            <div class="mini-stats">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="font-weight: 700; color: var(--primary);"><i class="fas fa-chart-pie"></i> <span id="miniStatsTitle">توزيع الطلاب</span></span>
+                    <span style="background: var(--primary); color: white; padding: 2px 10px; border-radius: 20px; font-size: 13px;"><span id="miniStatsTotal">0</span></span>
+                </div>
+                <div class="progress-bars">
+                    <div class="progress-container">
+                        <div id="firstSecProgress" class="progress-bar-first" style="width: 0%;"></div>
+                        <div id="secondSecProgress" class="progress-bar-second" style="width: 0%;"></div>
+                        <div id="thirdSecProgress" class="progress-bar-third" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div class="payment-summary">
+                    <div class="payment-item">
+                        <span class="payment-label"><i class="fas fa-check-circle" style="color: var(--success);"></i> <span id="collectedLabel">المتحصل</span></span>
+                        <span class="payment-value success" id="collectedAmount">0 ج.م</span>
+                    </div>
+                    <div class="payment-item">
+                        <span class="payment-label"><i class="fas fa-times-circle" style="color: var(--danger);"></i> <span id="missingLabel">المتبقي</span></span>
+                        <span class="payment-value danger" id="missingAmount">0 ج.م</span>
+                    </div>
+                </div>
+            </div>
+
+            <h2 style="color: var(--primary); margin-bottom: 20px;" id="addTitle">إضافة طالب جديد</h2>
+            <div class="input-group"><label id="nameLabel">اسم الطالب</label><input type="text" id="nameInput" class="form-control" placeholder="..."></div>
+            <div class="input-group"><label id="notesLabel">ملاحظات</label><textarea id="notes" class="form-control" rows="2" placeholder="..."></textarea></div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="input-group">
+                    <label id="paymentLabel">حالة الدفع</label>
+                    <select id="payment" class="form-control" onchange="toggleDiscountInput()">
+                        <option value="not-paid" id="notPaidOption">غير مدفوع</option>
+                        <option value="paid" id="paidOption">مدفوع (كامل)</option>
+                        <option value="exempt" id="exemptOption">خالص (معفي)</option>
+                        <option value="discount" id="discountOption">خصم</option>
+                    </select>
+                </div>
+                <div class="input-group hidden" id="discountInputGroup">
+                    <label id="discountAmountLabel">قيمة الخصم (ج.م)</label>
+                    <input type="number" id="discountAmountInput" class="form-control" placeholder="50">
+                </div>
+                <div class="input-group">
+                    <label id="categoryLabel">الصف</label>
+                    <select id="category" class="form-control">
+                        <option value="First SEC" id="firstSecOption">الصف الأول الثانوي</option>
+                        <option value="Second SEC" id="secondSecOption">الصف الثاني الثانوي</option>
+                        <option value="Third SEC" id="thirdSecOption">الصف الثالث الثانوي</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="addNewStudent()" id="addBtn"><i class="fas fa-save"></i> إضافة الطالب</button>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 15px;">
+                <button class="btn btn-warning" onclick="resetAllStudents()" id="newMonthBtn"><i class="fas fa-calendar-plus"></i> بداية شهر جديد</button>
+                <button class="btn btn-danger" onclick="clearAllStudents()" id="deleteAllBtn"><i class="fas fa-trash-alt"></i> حذف الكل</button>
+                <button class="btn btn-secondary" onclick="confirmLogout()" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> خروج</button>
+            </div>
+
+            <div style="background: rgba(220,53,69,0.1); border-radius: 16px; padding: 20px; margin-top: 20px; border: 2px solid rgba(220,53,69,0.2);">
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:200px;">
+                        <select id="pdfCategorySelect" class="form-control" style="border-color: var(--danger);">
+                            <option value="all" id="pdfAllOption">جميع الصفوف</option>
+                            <option value="First SEC">أولى ثانوي</option>
+                            <option value="Second SEC">ثانية ثانوي</option>
+                            <option value="Third SEC">ثالثة ثانوي</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-pdf" onclick="exportCategoryToPDF()" id="pdfExportBtn" style="width: auto; margin:0;"><i class="fas fa-file-pdf"></i> تقرير شامل</button>
+                </div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; padding-top:10px; border-top:1px solid rgba(220,53,69,0.3);">
+                    <div style="flex:1; min-width:200px;">
+                        <select id="pdfNotPaidCategorySelect" class="form-control" style="border-color: var(--danger);">
+                            <option value="First SEC">أولى ثانوي</option>
+                            <option value="Second SEC">ثانية ثانوي</option>
+                            <option value="Third SEC">ثالثة ثانوي</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-pdf-notpaid" onclick="exportNotPaidCategoryToPDF()" id="pdfNotPaidExportBtn" style="width: auto; margin:0;"><i class="fas fa-file-pdf"></i> تقرير غير المسددين</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- students list -->
+        <div class="dashboard-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
+                <h2 style="color: var(--primary);" id="studentsListTitle"><i class="fas fa-users"></i> قائمة الطلاب</h2>
+                <div class="filter-bar" style="margin:0; display:flex; gap:10px;">
+                    <input type="text" id="search" placeholder="بحث..." class="form-control" style="width:200px;" oninput="render()">
+                    <select id="filterCategory" class="form-control" style="width:150px;" onchange="render()">
+                        <option value="all">الكل</option>
+                        <option value="First SEC">أولى</option>
+                        <option value="Second SEC">ثانية</option>
+                        <option value="Third SEC">ثالثة</option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th onclick="sortStudents('code')">الكود <i class="fas fa-sort"></i></th><th onclick="sortStudents('name')">الاسم <i class="fas fa-sort"></i></th><th>الصف</th><th onclick="sortStudents('attendance')">الحضور <i class="fas fa-sort"></i></th><th>حالة الدفع</th><th>إجراءات</th></tr></thead>
+                    <tbody id="table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- not paid section -->
+        <div class="dashboard-card" id="notPaidSection">
+            <h2 style="color: var(--danger); margin-bottom: 20px;" id="notPaidTitle"><i class="fas fa-exclamation-circle"></i> الطلاب غير المسددين</h2>
+            <div class="table-container"><table><thead><tr><th>الكود</th><th>الاسم</th><th>الصف</th><th>المطلوب</th><th>الدفع</th></tr></thead><tbody id="notPaidTable"></tbody></table></div>
+        </div>
+
+        <!-- توقيع Taim Deballa في الصفحة الرئيسية -->
+        <div class="footer-signature">Made by Taim Deballa</div>
+
+        <!-- separate page for student details (notes, absences, images) initially hidden -->
+        <div id="studentDetailPage" class="dashboard-card hidden" style="margin-top:20px;">
+            <div class="back-button" onclick="hideStudentDetail()"><i class="fas fa-arrow-right"></i> عودة للقائمة</div>
+            <div id="detailStudentInfo"></div>
+            <div id="detailContent"></div>
+        </div>
+    </div>
+
+    <!-- PDF template -->
+    <div id="pdfTemplate" class="pdf-template"><div id="pdfContent"><h1 id="pdfTitle"></h1><div id="pdfSubtitle" style="text-align: center; color: #666;"></div><div id="pdfDate" style="text-align: center; margin-bottom: 10px; color:#e63946;"></div><div id="pdfStatsContainer" class="pdf-stats"></div><table id="pdfTable"><thead><tr id="pdfTableHeader"></tr></thead><tbody id="pdfTableBody"></tbody></table></div></div>
+
+    <!-- print card template (flip) -->
+    <div id="printCardTemplate" style="display: none;">
+        <div id="printCardContent" class="print-flip-card">
+            <div class="front-side">
+                <h2 style="color:#4361ee; text-align:center;">بطاقة تعريف الطالب - Student Card</h2>
+                <hr style="margin:15px 0;">
+                <div style="display:flex; gap:30px; align-items:center;">
+                    <div style="flex:1;">
+                        <p style="font-size:16px; margin:10px 0;"><strong>الاسم:</strong> <span id="cardName"></span></p>
+                        <p style="font-size:16px; margin:10px 0;"><strong>الكود:</strong> <span id="cardId"></span></p>
+                        <p style="font-size:16px; margin:10px 0;"><strong>الصف:</strong> <span id="cardGrade"></span></p>
+                    </div>
+                    <div style="flex:1; text-align:center;">
+                        <div id="cardQRContainer" style="margin:0 auto;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="back-side">
+                <h4 style="color:#4361ee; margin-bottom:10px;">📝 ملاحظات</h4>
+                <div id="cardNotes" class="notes-textarea" style="background: white; border:1px solid #ddd;"></div>
+                <h4 style="color:#4361ee; margin:20px 0 10px;">📅 تواريخ الغياب</h4>
+                <div id="absentDatesList" class="absent-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- receipt template -->
+    <div id="receiptTemplate" class="pdf-template"><div id="receiptContent" style="text-align:center; padding:30px;"><h2 style="color:#4361ee; margin-bottom:10px;">Payment Receipt</h2><hr style="margin:15px 0;"><p id="receiptStudent"></p><p id="receiptCode"></p><p id="receiptGrade"></p><p id="receiptAmount"></p><p id="receiptStatus"></p><hr style="margin:15px 0;"><p id="receiptDate"></p><br><br><p>Teacher Signature</p><p style="font-weight:bold;">MR Hani Derballa</p></div></div>
+
+    <script>
+        const STUDENT_FEE = 220;
+        if (!localStorage.getItem('teacherPass')) localStorage.setItem('teacherPass', '202020');
+        let isDarkMode = localStorage.getItem('darkMode') === 'true';
+        let isArabic = localStorage.getItem('language') !== 'en';
+        if (isDarkMode) document.body.classList.add('dark-mode');
+        
+        let nextStudentId = Number(localStorage.getItem('nextStudentId') || 1);
+        let students = JSON.parse(localStorage.getItem('students') || '[]');
+        let dataUpdated = false;
+        
+        let currentScanIndicator = null;
+        let scanIndicatorTimeout = null;
+        
+        // دعم الحقول الجديدة مع الحفاظ على القديم
+        students.forEach(s => {
+            if (!s.permanentId) { s.permanentId = nextStudentId++; dataUpdated = true; }
+            if (s.scanCount === undefined) s.scanCount = 0;
+            if (!s.absentDates) s.absentDates = []; // array of {date, note}
+            if (!s.phone) s.phone = ''; 
+            if (!s.images) s.images = []; // array of dataURLs
+        });
+        
+        if (dataUpdated) {
+            localStorage.setItem('nextStudentId', nextStudentId);
+            localStorage.setItem('students', JSON.stringify(students));
+        }
+        
+        let currentSortBy = 'code';
+        let currentSortOrder = 'asc';
+        let currentEditIndex = -1;
+        let scanLogs = JSON.parse(localStorage.getItem('scanLogs') || '[]');
+        let currentDetailStudentId = null;
+
+        function saveLocal() {
+            localStorage.setItem('students', JSON.stringify(students));
+            localStorage.setItem('nextStudentId', nextStudentId);
+            localStorage.setItem('scanLogs', JSON.stringify(scanLogs));
+            render();
+            if (currentDetailStudentId) showStudentDetail(currentDetailStudentId);
+        }
+
+        let html5QrcodeScanner = null;
+
+        function requestCameraPermission() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    showToast('تم منح إذن الكاميرا بنجاح', 'success');
+                    document.getElementById('scanResult').innerHTML = '<div class="camera-permission-msg success">✓ الكاميرا جاهزة</div>';
+                })
+                .catch(function(err) {
+                    console.error('Camera permission error:', err);
+                    let msg = 'خطأ في الحصول على إذن الكاميرا';
+                    if (err.name === 'NotAllowedError') msg = 'تم رفض الإذن. يرجى السماح يدوياً.';
+                    else if (err.name === 'NotFoundError') msg = 'لا توجد كاميرا متصلة.';
+                    else if (err.name === 'NotReadableError') msg = 'الكاميرا مشغولة أو غير قابلة للوصول.';
+                    showToast(msg, 'error');
+                    document.getElementById('scanResult').innerHTML = `<div class="camera-permission-msg error">✗ ${msg}</div>`;
+                });
+        }
+
+        function startScanner() {
+            const container = document.getElementById('scannerContainer');
+            container.innerHTML = '<div id="reader" style="width:100%;"></div>';
+            if (html5QrcodeScanner) { try { html5QrcodeScanner.clear(); } catch(e) {} }
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps:10, qrbox:250, rememberLastUsedCamera:true, showTorchButtonIfSupported:true });
+            html5QrcodeScanner.render((decodedText) => {
+                const match = decodedText.match(/[?&]studentId=(\d+)/);
+                if (match) {
+                    const studentId = parseInt(match[1]);
+                    const studentIndex = students.findIndex(s => s.permanentId === studentId);
+                    const student = students[studentIndex];
+                    if (student) {
+                        student.scanCount = (student.scanCount || 0) + 1;
+                        const now = new Date();
+                        scanLogs.push({ studentId: student.permanentId, date: now.toLocaleDateString('ar-EG'), time: now.toLocaleTimeString('ar-EG'), timestamp: now.getTime() });
+                        if (scanLogs.length > 500) scanLogs = scanLogs.slice(-500);
+                        saveLocal();
+                        document.getElementById('scanResult').innerHTML = `<div style="background:var(--success); color:white; padding:10px; border-radius:10px;"><i class="fas fa-check-circle"></i> تم مسح الطالب: ${student.name}<br></div>`;
+                        render(); 
+                        setTimeout(() => {
+                            const rows = document.querySelectorAll('#table tr');
+                            if (rows[studentIndex]) {
+                                rows[studentIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                rows[studentIndex].classList.add('highlight-student');
+                                showScanIndicator(rows[studentIndex], student.name);
+                                setTimeout(() => rows[studentIndex].classList.remove('highlight-student'), 2500);
+                            }
+                        }, 200);
+                    } else {
+                        document.getElementById('scanResult').innerHTML = `<div style="background:var(--danger); color:white; padding:10px; border-radius:10px;"><i class="fas fa-times-circle"></i> طالب غير موجود</div>`;
+                    }
+                } else {
+                    document.getElementById('scanResult').innerHTML = `<div style="background:var(--warning); color:white; padding:10px; border-radius:10px;"><i class="fas fa-exclamation-triangle"></i> QR code غير صالح</div>`;
+                }
+            }, (error) => {
+                if (error && (error.includes('NotFoundError') || error.includes('NotAllowedError'))) {
+                    document.getElementById('scanResult').innerHTML = `<div class="camera-permission-msg error"><i class="fas fa-exclamation-triangle"></i> يرجى منح إذن الكاميرا أولاً</div>`;
+                }
+            });
+        }
+
+        function showScanIndicator(rowElement, studentName) {
+            if (currentScanIndicator) {
+                clearTimeout(scanIndicatorTimeout);
+                if (currentScanIndicator.parentNode) {
+                    currentScanIndicator.classList.add('fade-out');
+                    setTimeout(() => { if (currentScanIndicator && currentScanIndicator.parentNode) currentScanIndicator.remove(); }, 300);
+                }
+            }
+            const nameCell = rowElement.cells[1];
+            if (!nameCell) return;
+            const indicator = document.createElement('span');
+            indicator.className = 'scan-indicator';
+            indicator.innerHTML = '<i class="fas fa-qrcode"></i> تم المسح الآن';
+            nameCell.appendChild(indicator);
+            currentScanIndicator = indicator;
+            scanIndicatorTimeout = setTimeout(() => {
+                if (indicator && indicator.parentNode) {
+                    indicator.classList.add('fade-out');
+                    setTimeout(() => { if (indicator && indicator.parentNode) indicator.remove(); if (currentScanIndicator === indicator) currentScanIndicator = null; }, 300);
+                }
+            }, 30000);
+        }
+
+        function stopScanner() {
+            if (html5QrcodeScanner) { try { html5QrcodeScanner.clear(); } catch(e) {} html5QrcodeScanner = null; }
+            document.getElementById('scannerContainer').innerHTML = '';
+            document.getElementById('scanResult').innerHTML = '';
+        }
+
+        // دالة مساعدة لإنشاء بطاقة طالب كـ HTML (تُستخدم في إنشاء PDF واحد)
+        async function generateStudentCardHTML(s) {
+            const profileUrl = `${window.location.origin}${window.location.pathname}?studentId=${s.permanentId}`;
+            const canvas = document.createElement('canvas');
+            await QRCode.toCanvas(canvas, profileUrl, { width: 150, margin: 1 });
+            const qrImageData = canvas.toDataURL('image/png');
+            
+            let gradeText = s.category === 'First SEC' ? 'الأول الثانوي' : s.category === 'Second SEC' ? 'الثاني الثانوي' : 'الثالث الثانوي';
+            const absentDates = s.absentDates || [];
+            const absentHtml = absentDates.map(d => `<span style="background:#e63946; color:white; padding:4px 8px; border-radius:20px; font-size:12px; display:inline-block; margin:2px;">${d.date} ${d.note ? ' ('+d.note+')' : ''}</span>`).join('');
+
+            return `
+                <div style="font-family: 'Tajawal', sans-serif; direction: rtl; width: 100%; max-width: 750px; margin: 0 auto; background: white; border-radius: 25px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.2); border: 2px solid #4361ee;">
+                    <div style="padding: 30px;">
+                        <h2 style="color:#4361ee; text-align:center; margin-bottom:15px;">مستر هاني دربالة - MR Hani Derballa</h2>
+                        <h3 style="text-align:center; color:#333;">بطاقة تعريف الطالب - Student Card</h3>
+                        <hr style="border:none; height:2px; background:linear-gradient(90deg,#4361ee,#f72585); margin:15px 0;">
+                        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+                            <div style="flex:2;">
+                                <div style="display:flex; margin:15px 0; font-size:18px;"><strong style="min-width:100px; color:#4361ee;">الاسم:</strong> <span>${s.name}</span></div>
+                                <div style="display:flex; margin:15px 0; font-size:18px;"><strong style="min-width:100px; color:#4361ee;">الكود:</strong> <span>#${s.permanentId}</span></div>
+                                <div style="display:flex; margin:15px 0; font-size:18px;"><strong style="min-width:100px; color:#4361ee;">الصف:</strong> <span>${gradeText}</span></div>
+                            </div>
+                            <div style="flex:1; text-align:center;">
+                                <img src="${qrImageData}" alt="QR" style="width:150px; border:2px solid #4361ee; border-radius:15px; padding:5px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 30px; background:#f8f9fa; border-top:3px dashed #4361ee;">
+                        <h4 style="color:#4361ee; margin-bottom:10px;">📝 ملاحظات</h4>
+                        <div style="background:white; border:1px solid #ccc; border-radius:12px; padding:12px; min-height:80px; margin:15px 0;">${s.notes || ''}</div>
+                        <h4 style="color:#4361ee; margin-top:20px; margin-bottom:10px;">📅 تواريخ الغياب</h4>
+                        <div style="display:flex; flex-wrap:wrap; gap:8px;">${absentHtml || 'لا توجد غيابات مسجلة'}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // دالة جديدة: تحميل كل البطاقات كملف PDF واحد (كل بطاقة في صفحة منفصلة)
+        async function downloadAllCardsAsOnePDF() {
+            const search = document.getElementById('search').value.toLowerCase();
+            const filter = document.getElementById('filterCategory').value;
+            let filtered = students.filter(s => (filter === 'all' || s.category === filter) && (s.name.toLowerCase().includes(search) || String(s.permanentId).includes(search)));
+            
+            if (filtered.length === 0) {
+                showToast(isArabic ? 'لا يوجد طلاب لإنشاء البطاقات' : 'No students to generate cards', 'warning');
+                return;
+            }
+
+            showToast(isArabic ? 'جاري إنشاء ملف PDF...' : 'Generating PDF...', 'success');
+
+            try {
+                // إنشاء ملف PDF جديد
+                const pdf = new jspdf.jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                // صفحة عنوان
+                pdf.setFontSize(20);
+                pdf.setTextColor(67, 97, 238);
+                pdf.text(isArabic ? 'بطاقات تعريف الطلاب' : 'Students ID Cards', 105, 20, { align: 'center' });
+                pdf.setFontSize(14);
+                pdf.setTextColor(0, 0, 0);
+                pdf.text(isArabic ? `إجمالي الطلاب: ${filtered.length}` : `Total Students: ${filtered.length}`, 105, 30, { align: 'center' });
+                pdf.text(new Date().toLocaleDateString('ar-EG'), 105, 38, { align: 'center' });
+                
+                // خط فاصل
+                pdf.setDrawColor(67, 97, 238);
+                pdf.setLineWidth(0.5);
+                pdf.line(20, 45, 190, 45);
+
+                let pageCounter = 1;
+
+                // إنشاء بطاقة لكل طالب
+                for (let i = 0; i < filtered.length; i++) {
+                    const s = filtered[i];
+                    
+                    // إضافة صفحة جديدة لكل طالب (بعد الأول)
+                    if (i > 0) {
+                        pdf.addPage();
+                    }
+
+                    // إنشاء HTML البطاقة
+                    const cardHTML = await generateStudentCardHTML(s);
+                    
+                    // إنشاء عنصر div مؤقت لتحويله إلى Canvas
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = cardHTML;
+                    tempDiv.style.position = 'absolute';
+                    tempDiv.style.left = '-9999px';
+                    tempDiv.style.top = '-9999px';
+                    tempDiv.style.width = '750px';
+                    document.body.appendChild(tempDiv);
+
+                    // تحويل البطاقة إلى Canvas
+                    const canvas = await html2canvas(tempDiv.firstElementChild, { 
+                        scale: 2,
+                        backgroundColor: '#ffffff',
+                        logging: false,
+                        allowTaint: false,
+                        useCORS: true
+                    });
+                    
+                    // حساب أبعاد الصورة لتناسب صفحة A4
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgWidth = 190; // عرض الصورة بالملم
+                    const pageHeight = 287; // ارتفاع صفحة A4 بالملم
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    
+                    // إضافة الصورة إلى PDF
+                    pdf.addImage(imgData, 'PNG', 10, 15, imgWidth, imgHeight);
+                    
+                    // إزالة العنصر المؤقت
+                    document.body.removeChild(tempDiv);
+                }
+
+                // حفظ ملف PDF
+                pdf.save(isArabic ? 'جميع_بطاقات_الطلاب.pdf' : 'all_students_cards.pdf');
+                showToast(isArabic ? 'تم إنشاء ملف PDF بنجاح' : 'PDF generated successfully', 'success');
+
+            } catch (err) {
+                console.error('Error generating PDF:', err);
+                showToast(isArabic ? 'حدث خطأ أثناء إنشاء PDF' : 'Error generating PDF', 'error');
+            }
+        }
+
+        // طباعة البطاقة الفردية (بنفس الشكل القديم)
+        async function printStudentCard(index) {
+            const s = students[index];
+            try {
+                const cardHTML = await generateStudentCardHTML(s);
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html dir="rtl">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>بطاقة تعريف الطالب - ${s.name}</title>
+                        <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+                        <style>
+                            body { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; margin: 0; background: #f0f0f0; }
+                        </style>
+                    </head>
+                    <body>
+                        ${cardHTML}
+                        <script>
+                            window.onload = function() { 
+                                window.print(); 
+                                window.onafterprint = function() { window.close(); };
+                            }
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+            } catch(err) { 
+                console.error(err); 
+                showToast('خطأ في إنشاء البطاقة', 'error'); 
+            }
+        }
+
+        // عرض صفحة التفاصيل المنفصلة
+        function showStudentDetail(studentId) {
+            currentDetailStudentId = studentId;
+            const s = students.find(st => st.permanentId === studentId);
+            if (!s) return;
+            document.getElementById('studentDetailPage').classList.remove('hidden');
+            // بناء المحتوى
+            let html = `
+                <div class="student-mini-card">
+                    <div class="details">
+                        <span class="detail-badge">#${s.permanentId}</span>
+                        <h3>${s.name}</h3>
+                        <div class="phone-with-wa">
+                            <i class="fas fa-phone-alt"></i>
+                            <input type="text" id="detailPhone" value="${s.phone || ''}" placeholder="رقم الهاتف" class="form-control" style="width:160px; margin:0;">
+                            <a href="https://wa.me/${s.phone ? s.phone.replace(/\s+/g,'') : ''}" target="_blank" class="whatsapp-link"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <h4>📋 ملاحظات</h4>
+                <textarea id="detailNotes" class="form-control" rows="3">${s.notes || ''}</textarea>
+                <button class="btn" onclick="updateNotesPhone(${s.permanentId})" style="width:auto; margin:10px 0;">حفظ الملاحظات والهاتف</button>
+
+                <h4 style="margin-top:20px;">📅 تواريخ الغياب</h4>
+                <table class="absent-table" id="absentTable">
+                    <thead><tr><th>التاريخ</th><th>ملاحظة</th><th></th></tr></thead>
+                    <tbody>
+                        ${(s.absentDates || []).map((a, idx) => `<tr>
+                            <td><input type="date" value="${a.date}" class="absent-date-${idx}" style="width:100%;"></td>
+                            <td><input type="text" value="${a.note || ''}" class="absent-note-${idx}" placeholder="اختياري"></td>
+                            <td><button class="delete-row-btn" onclick="deleteAbsentRow(${s.permanentId}, ${idx})"><i class="fas fa-trash"></i></button></td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>
+                <button class="add-absent-row" onclick="addAbsentRow(${s.permanentId})"><i class="fas fa-plus"></i> إضافة تاريخ غياب</button>
+
+                <h4 style="margin-top:20px;">🖼️ صور الطالب</h4>
+                <div class="image-gallery" id="studentGallery">
+                    ${(s.images || []).map(img => `<div class="gallery-item"><img src="${img}" alt="student image"></div>`).join('')}
+                </div>
+                <div class="upload-btn-wrapper">
+                    <button class="btn btn-secondary" style="width:auto;"><i class="fas fa-upload"></i> رفع صورة</button>
+                    <input type="file" accept="image/*" multiple onchange="uploadImages(${s.permanentId}, event)">
+                </div>
+            `;
+            document.getElementById('detailContent').innerHTML = html;
+        }
+
+        function hideStudentDetail() {
+            document.getElementById('studentDetailPage').classList.add('hidden');
+            currentDetailStudentId = null;
+        }
+
+        function updateNotesPhone(id) {
+            const s = students.find(st => st.permanentId === id);
+            if (!s) return;
+            s.notes = document.getElementById('detailNotes').value;
+            s.phone = document.getElementById('detailPhone').value;
+            saveLocal();
+            showToast('تم الحفظ', 'success');
+        }
+
+        function addAbsentRow(id) {
+            const s = students.find(st => st.permanentId === id);
+            if (!s) return;
+            if (!s.absentDates) s.absentDates = [];
+            s.absentDates.push({ date: new Date().toISOString().slice(0,10), note: '' });
+            saveLocal();
+            showStudentDetail(id);
+        }
+
+        function deleteAbsentRow(id, idx) {
+            const s = students.find(st => st.permanentId === id);
+            if (!s || !s.absentDates) return;
+            s.absentDates.splice(idx, 1);
+            saveLocal();
+            showStudentDetail(id);
+        }
+
+        function uploadImages(id, event) {
+            const s = students.find(st => st.permanentId === id);
+            if (!s) return;
+            const files = event.target.files;
+            if (!files.length) return;
+            if (!s.images) s.images = [];
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    s.images.push(e.target.result);
+                    if (s.images.length > 10) s.images = s.images.slice(-10);
+                    saveLocal();
+                    showStudentDetail(id);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            if (panel.style.display === 'block') renderAdminDashboard();
+        }
+
+        function renderAdminDashboard() {
+            const total = students.length;
+            const totalScans = students.reduce((acc, s) => acc + (s.scanCount || 0), 0);
+            const top10 = [...students].filter(s => s.scanCount > 0).sort((a,b) => (b.scanCount||0)-(a.scanCount||0)).slice(0,10);
+            const recent20 = [...scanLogs].sort((a,b)=>b.timestamp-a.timestamp).slice(0,20);
+            document.getElementById('adminStats').innerHTML = `<div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-info"><h3>${total}</h3><p>إجمالي الطلاب</p></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-qrcode"></i></div><div class="stat-info"><h3>${totalScans}</h3><p>إجمالي المسح</p></div></div>`;
+            if(top10.length) document.getElementById('topScannedTable').innerHTML = `<table><tr><th>الاسم</th><th>الكود</th><th>عدد المسح</th></tr>${top10.map(s=>`<tr><td>${s.name}</td><td>#${s.permanentId}</td><td>${s.scanCount}</td></tr>`).join('')}</table>`;
+            else document.getElementById('topScannedTable').innerHTML = '<p style="color:var(--gray);">لا توجد مسوحات بعد</p>';
+            if(recent20.length) document.getElementById('recentScansTable').innerHTML = `<table><tr><th>الطالب</th><th>التاريخ</th><th>الوقت</th></tr>${recent20.map(l=>{let stu=students.find(s=>s.permanentId==l.studentId); return `<tr><td>${stu?stu.name:'غير معروف'}</td><td>${l.date}</td><td>${l.time}</td></tr>`;}).join('')}</table>`;
+            else document.getElementById('recentScansTable').innerHTML = '<p style="color:var(--gray);">لا توجد مسوحات بعد</p>';
+        }
+
+        function addNewStudent() {
+            const n = document.getElementById('nameInput').value.trim();
+            if (!n) { alert(isArabic ? 'أدخل الاسم' : 'Enter name'); return; }
+            const payStatus = document.getElementById('payment').value;
+            let discAmt = 0;
+            if (payStatus === 'discount') discAmt = Number(document.getElementById('discountAmountInput').value) || 0;
+            students.push({
+                name: n,
+                category: document.getElementById('category').value,
+                payment: payStatus, 
+                discountAmount: discAmt,
+                attendance: 0,
+                notes: document.getElementById('notes').value,
+                permanentId: nextStudentId++,
+                scanCount: 0,
+                absentDates: [],
+                phone: '',
+                images: []
+            });
+            document.getElementById('nameInput').value = ''; document.getElementById('notes').value = ''; document.getElementById('payment').value = 'not-paid'; document.getElementById('discountAmountInput').value = ''; document.getElementById('discountInputGroup').classList.add('hidden');
+            saveLocal(); showToast(isArabic ? 'تمت الإضافة' : 'Added', 'success');
+        }
+
+        function render() {
+            const table = document.getElementById('table');
+            const notPaidTable = document.getElementById('notPaidTable');
+            const search = document.getElementById('search').value.toLowerCase();
+            const filter = document.getElementById('filterCategory').value;
+            table.innerHTML = ''; notPaidTable.innerHTML = '';
+            let total = 0, att = 0, paidCount = 0, notPaidCount = 0, collectedMoney = 0, missingMoney = 0;
+            students.forEach(s => { total++; att += s.attendance; let currentFee = STUDENT_FEE - (s.discountAmount||0); if(currentFee<0) currentFee=0;
+                if (s.payment === 'paid') { paidCount++; collectedMoney += STUDENT_FEE; }
+                else if (s.payment === 'exempt') paidCount++; 
+                else if (s.payment === 'discount') { paidCount++; collectedMoney += currentFee; }
+                else { notPaidCount++; missingMoney += currentFee; }
+            });
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statAttendance').textContent = total ? Math.round((att/total)*100/9) + '%' : '0%';
+            document.getElementById('statPaid').textContent = total ? Math.round((paidCount/total)*100) + '%' : '0%';
+            document.getElementById('statNotPaid').textContent = notPaidCount;
+            document.getElementById('collectedAmount').textContent = collectedMoney.toLocaleString() + ' ج.م';
+            document.getElementById('missingAmount').textContent = missingMoney.toLocaleString() + ' ج.م';
+
+            const f = students.filter(s => s.category === 'First SEC').length;
+            const se = students.filter(s => s.category === 'Second SEC').length;
+            const th = students.filter(s => s.category === 'Third SEC').length;
+            document.getElementById('miniStatsTotal').textContent = total;
+            document.getElementById('firstSecProgress').style.width = total ? (f/total*100)+'%' : '0%';
+            document.getElementById('secondSecProgress').style.width = total ? (se/total*100)+'%' : '0%';
+            document.getElementById('thirdSecProgress').style.width = total ? (th/total*100)+'%' : '0%';
+
+            let filtered = students.filter(s => (filter === 'all' || s.category === filter) && (s.name.toLowerCase().includes(search) || String(s.permanentId).includes(search)));
+            filtered.sort((a,b) => {
+                let va, vb;
+                if (currentSortBy === 'code') { va = a.permanentId; vb = b.permanentId; }
+                else if (currentSortBy === 'attendance') { va = Number(a.attendance); vb = Number(b.attendance); }
+                else if (currentSortBy === 'name') { va = a.name; vb = b.name; }
+                else { va = a[currentSortBy]; vb = b[currentSortBy]; }
+                return currentSortOrder === 'asc' ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+            });
+
+            filtered.forEach(s => {
+                const i = students.indexOf(s);
+                let payBadgeClass = 'not-paid', payBadgeIcon = 'fa-times-circle', payBadgeText = isArabic ? 'غير مدفوع' : 'Not Paid';
+                if (s.payment === 'paid') { payBadgeClass = 'paid'; payBadgeIcon = 'fa-check-circle'; payBadgeText = isArabic ? 'مدفوع' : 'Paid'; }
+                else if (s.payment === 'exempt') { payBadgeClass = 'exempt'; payBadgeIcon = 'fa-star'; payBadgeText = isArabic ? 'خالص' : 'Exempt'; }
+                else if (s.payment === 'discount') { payBadgeClass = 'discount'; payBadgeIcon = 'fa-percentage'; payBadgeText = isArabic ? `خصم (${s.discountAmount})` : `Disc (${s.discountAmount})`; }
+
+                const gradeClass = s.category === 'First SEC' ? 'first-sec' : s.category === 'Second SEC' ? 'second-sec' : 'third-sec';
+                table.innerHTML += `<tr>
+                    <td style="font-weight:900; color:var(--primary);">#${s.permanentId}</td>
+                    <td class="student-name-cell">${s.name}</td>
+                    <td><span class="grade-badge ${gradeClass}">${s.category === 'First SEC' ? '1-SEC' : s.category === 'Second SEC' ? '2-SEC' : '3-SEC'}</span></td>
+                    <td><div class="attendance-badge"><button onclick="decreaseAttendance(${i})">-</button><span>${s.attendance}/9</span><button onclick="addAttendance(${i})">+</button></div></td>
+                    <td><button class="payment-status ${payBadgeClass}" onclick="togglePayment(${i})"><i class="fas ${payBadgeIcon}"></i> ${payBadgeText}</button></td>
+                    <td>
+                        <button class="action-btn qr-icon-btn" onclick="printStudentCard(${i})" title="طباعة البطاقة"><i class="fas fa-id-card"></i></button>
+                        <button class="action-btn" onclick="openEditModal(${i})"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete" onclick="delStudent(${i})"><i class="fas fa-trash"></i></button>
+                        <button class="action-btn" onclick="exportReceipt(${i})"><i class="fas fa-receipt"></i></button>
+                    </td>
+                </tr>`;
+
+                if (s.payment === 'not-paid') {
+                    let required = STUDENT_FEE - (s.discountAmount||0);
+                    notPaidTable.innerHTML += `<tr><td>#${s.permanentId}</td><td>${s.name}</td><td><span class="grade-badge ${gradeClass}">${s.category==='First SEC'?'1':s.category==='Second SEC'?'2':'3'}</span></td><td style="color:var(--danger);">${required} ج.م</td><td><button class="payment-status not-paid" onclick="togglePayment(${i})"><i class="fas fa-hand-holding-usd"></i> دفع</button></td></tr>`;
+                }
+            });
+            if (table.innerHTML === '') table.innerHTML = '<tr><td colspan="6" style="padding:30px; color:var(--gray);">لا يوجد بيانات</td></tr>';
+            if (notPaidTable.innerHTML === '') notPaidTable.innerHTML = '<tr><td colspan="5" style="padding:30px; color:var(--success);">الجميع مسدد!</td></tr>';
+        }
+
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function scrollToNotPaid() { document.getElementById('notPaidSection').scrollIntoView({ behavior: 'smooth' }); }
+        function showToast(msg, type = 'success') {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = `toast-notification ${type}`;
+            let icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-times-circle' : 'fa-info-circle';
+            t.innerHTML = `<i class="fas ${icon}"></i><span>${msg}</span>`;
+            c.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+        function toggleDiscountInput() { document.getElementById('discountInputGroup').classList.toggle('hidden', document.getElementById('payment').value !== 'discount'); }
+        function toggleModalDiscountInput() { document.getElementById('modalDiscountGroup').classList.toggle('hidden', document.getElementById('modalPaymentStatus').value !== 'discount'); }
+        function openEditModal(index) {
+            currentEditIndex = index; const s = students[index];
+            document.getElementById('modalStudentName').value = s.name;
+            document.getElementById('modalStudentGrade').value = s.category;
+            document.getElementById('modalStudentNotes').value = s.notes || '';
+            document.getElementById('modalPaymentStatus').value = s.payment || 'not-paid';
+            document.getElementById('modalDiscountVal').value = s.discountAmount || '';
+            toggleModalDiscountInput();
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+        function closeEditModal() { document.getElementById('modalOverlay').classList.add('hidden'); document.getElementById('editModal').classList.add('hidden'); currentEditIndex = -1; }
+        function saveStudentEdit() {
+            if (currentEditIndex === -1) return;
+            const s = students[currentEditIndex];
+            s.name = document.getElementById('modalStudentName').value;
+            s.category = document.getElementById('modalStudentGrade').value;
+            s.notes = document.getElementById('modalStudentNotes').value;
+            s.payment = document.getElementById('modalPaymentStatus').value;
+            if (s.payment === 'discount') s.discountAmount = Number(document.getElementById('modalDiscountVal').value) || 0;
+            saveLocal(); closeEditModal(); showToast(isArabic ? 'تم التعديل' : 'Saved', 'success');
+        }
+        function togglePayment(i) {
+            const s = students[i];
+            if (s.payment === 'paid') s.payment = 'not-paid';
+            else if (s.payment === 'not-paid') { if (s.discountAmount > 0) s.payment = 'discount'; else s.payment = 'paid'; }
+            else if (s.payment === 'discount') s.payment = 'not-paid';
+            else if (s.payment === 'exempt' && confirm(isArabic ? 'هل تريد إلغاء الإعفاء؟' : 'Remove exemption?')) s.payment = 'not-paid';
+            saveLocal();
+        }
+        function resetAllStudents() {
+            if (confirm(isArabic ? 'بدء شهر جديد؟ (سيتم تصفير الدفع ما عدا الخالص)' : 'New Month?')) {
+                students.forEach(s => { s.attendance = 0; if (s.payment !== 'exempt') s.payment = 'not-paid'; });
+                saveLocal(); showToast(isArabic ? 'تم بدء شهر جديد' : 'New Month Started', 'success');
+            }
+        }
+        function clearAllStudents() { if (confirm('حذف جميع البيانات؟')) { students = []; scanLogs = []; saveLocal(); } }
+        function delStudent(i) { if (confirm('حذف الطالب؟')) { students.splice(i, 1); saveLocal(); } }
+        function addAttendance(i) { if (students[i].attendance < 9) { students[i].attendance++; saveLocal(); } }
+        function decreaseAttendance(i) { if (students[i].attendance > 0) { students[i].attendance--; saveLocal(); } }
+
+        async function exportCategoryToPDF() {
+            const cat = document.getElementById('pdfCategorySelect').value;
+            const list = cat === 'all' ? students : students.filter(s => s.category === cat);
+            if (!list.length) return alert('لا يوجد طلاب');
+            const now = new Date();
+            document.getElementById('pdfTitle').innerHTML = "تقارير طلاب مستر هاني دربالة - MR Hani Derballa";
+            document.getElementById('pdfSubtitle').textContent = cat;
+            document.getElementById('pdfDate').textContent = now.toLocaleDateString('ar-EG');
+            const total = list.length, paid = list.filter(s => s.payment === 'paid' || s.payment === 'exempt' || s.payment === 'discount').length;
+            document.getElementById('pdfStatsContainer').innerHTML = `<div class="pdf-stat-card"><div class="pdf-stat-value">${total}</div><div>الإجمالي</div></div><div class="pdf-stat-card"><div class="pdf-stat-value">${paid}</div><div>المسددين</div></div><div class="pdf-stat-card"><div class="pdf-stat-value">${total-paid}</div><div>غير المسدد</div></div>`;
+            document.getElementById('pdfTableHeader').innerHTML = '<th>الكود</th><th>الاسم</th><th>الصف</th><th>الحضور</th><th>حالة الدفع</th>';
+            document.getElementById('pdfTableBody').innerHTML = list.map(s => `<tr><td>#${s.permanentId}</td><td>${s.name}</td><td>${s.category}</td><td>${s.attendance}/9</td><td>${s.payment}</td></tr>`).join('');
+            const canvas = await html2canvas(document.getElementById('pdfTemplate'), { scale: 2 });
+            const pdf = new jspdf.jsPDF();
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, 190, 0);
+            pdf.save(`Students_Report_${cat}.pdf`);
+        }
+
+        async function exportNotPaidCategoryToPDF() {
+            const cat = document.getElementById('pdfNotPaidCategorySelect').value;
+            const list = students.filter(s => s.category === cat && s.payment === 'not-paid');
+            if (!list.length) return alert('لا يوجد غير مسددين');
+            const now = new Date();
+            document.getElementById('pdfTitle').innerHTML = "تقرير الطلاب غير المسددين";
+            document.getElementById('pdfSubtitle').textContent = cat;
+            document.getElementById('pdfDate').textContent = now.toLocaleDateString('ar-EG');
+            let totalMissing = 0;
+            list.forEach(s => totalMissing += STUDENT_FEE - (s.discountAmount||0));
+            document.getElementById('pdfStatsContainer').innerHTML = `<div class="pdf-stat-card"><div class="pdf-stat-value">${list.length}</div><div>عدد الطلاب</div></div><div class="pdf-stat-card"><div class="pdf-stat-value">${totalMissing}</div><div>إجمالي المستحق</div></div>`;
+            document.getElementById('pdfTableHeader').innerHTML = '<th>الكود</th><th>الاسم</th><th>الصف</th><th>المطلوب</th>';
+            document.getElementById('pdfTableBody').innerHTML = list.map(s => `<tr><td>#${s.permanentId}</td><td>${s.name}</td><td>${s.category}</td><td>${STUDENT_FEE - (s.discountAmount||0)} ج.م</td></tr>`).join('');
+            const canvas = await html2canvas(document.getElementById('pdfTemplate'), { scale: 2 });
+            const pdf = new jspdf.jsPDF();
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, 190, 0);
+            pdf.save(`NotPaid_Report_${cat}.pdf`);
+        }
+
+        async function exportReceipt(index) {
+            const s = students[index];
+            let amount = STUDENT_FEE - (s.discountAmount||0); if (s.payment==='exempt') amount=0; if(amount<0) amount=0;
+            document.getElementById('receiptStudent').textContent = "Student: "+s.name;
+            document.getElementById('receiptCode').textContent = "Code: #"+s.permanentId;
+            document.getElementById('receiptGrade').textContent = "Grade: "+s.category;
+            document.getElementById('receiptAmount').textContent = "Paid Amount: "+amount+" EGP";
+            document.getElementById('receiptStatus').textContent = "Payment Status: "+s.payment;
+            document.getElementById('receiptDate').textContent = new Date().toLocaleDateString('ar-EG')+" "+new Date().toLocaleTimeString('ar-EG');
+            const canvas = await html2canvas(document.getElementById('receiptTemplate'), { scale: 2 });
+            const pdf = new jspdf.jsPDF();
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, 190, 0);
+            pdf.save(`Receipt_${s.name}.pdf`);
+        }
+
+        function login() {
+            if (document.getElementById('loginPass').value === localStorage.getItem('teacherPass')) {
+                document.getElementById('loginBox').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                document.getElementById('backToTopBtn').classList.remove('hidden');
+                render();
+            } else {
+                document.getElementById('loginMsg').textContent = 'كلمة المرور غير صحيحة';
+            }
+        }
+        function confirmLogout() { if (confirm('خروج؟')) location.reload(); }
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            localStorage.setItem('darkMode', isDarkMode);
+        }
+        function togglePasswordVisibility() { const p = document.getElementById('loginPass'); p.type = p.type === 'password' ? 'text' : 'password'; }
+        function sortStudents(c) {
+            if (currentSortBy === c) currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+            else { currentSortBy = c; currentSortOrder = 'asc'; }
+            render();
+        }
+        (function checkUrlForScan() {
+            const params = new URLSearchParams(window.location.search);
+            const sid = params.get('studentId');
+            if (sid) {
+                const student = students.find(s => s.permanentId == sid);
+                if (student) {
+                    student.scanCount = (student.scanCount || 0) + 1;
+                    const now = new Date();
+                    scanLogs.push({ studentId: student.permanentId, date: now.toLocaleDateString('ar-EG'), time: now.toLocaleTimeString('ar-EG'), timestamp: now.getTime() });
+                    saveLocal();
+                    setTimeout(() => showToast(`مرحباً ${student.name}! تم تسجيل دخولك`, 'success'), 500);
+                }
+            }
+        })();
+    </script>
+</body>
+</html>
